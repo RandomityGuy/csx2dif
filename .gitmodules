@@ -1,0 +1,6 @@
+[submodule "3rdparty/DifBuilder"]
+	path = 3rdparty/DifBuilder
+	url = https://github.com/RandomityGuy/DifBuilder.git
+[submodule "3rdparty/tinyobjloader"]
+	path = 3rdparty/tinyobjloader
+	url = https://github.com/syoyo/tinyobjloader.git
