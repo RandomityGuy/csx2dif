@@ -72,6 +72,8 @@ glm::vec2 computeUV(TexGen& texgen, glm::vec3 vertex, float* texsizes)
 	target[0] += texgen.axisU.w / texsizes[0];
 	target[1] -= texgen.axisV.w / texsizes[1];
 
+	target[1] *= -1;
+
 	return target;
 }
 
@@ -106,7 +108,7 @@ std::vector<int> parseIndices(const char* str)
 
 int main(int argc, const char** argv)
 {
-	printf("csx2dif 1.0\n");
+	printf("csx2dif 0.0.1 experimental\n");
 
 	tinyxml2::XMLDocument csx;
 
@@ -196,7 +198,7 @@ int main(int argc, const char** argv)
 			brush = brush->NextSiblingElement();
 		}
 
-		glm::vec3 totaloff = (max - min) * 0.5f + glm::vec3(50, 50, 50);
+		glm::vec3 totaloff = glm::vec3(0); // (max - min) * 0.5f + glm::vec3(50, 50, 50);
 
 		brushes = interiormap->FirstChildElement("Brushes");
 		brush = brushes->FirstChildElement();
