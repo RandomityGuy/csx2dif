@@ -108,7 +108,7 @@ std::vector<int> parseIndices(const char* str)
 
 int main(int argc, const char** argv)
 {
-	printf("csx2dif 0.0.2 experimental\n");
+	printf("csx2dif 0.0.3 experimental\n");
 
 	tinyxml2::XMLDocument csx;
 
