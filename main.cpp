@@ -108,7 +108,13 @@ std::vector<int> parseIndices(const char* str)
 
 int main(int argc, const char** argv)
 {
-	printf("csx2dif 0.0.4 experimental\n");
+	printf("csx2dif 0.0.5 experimental\n");
+
+	if (argc < 2)
+	{
+		printf("Usage: csx2dif <csx file>\n");
+		return 0;
+	}
 
 	tinyxml2::XMLDocument csx;
 
@@ -158,12 +164,13 @@ int main(int argc, const char** argv)
 
 			glm::decompose(transform, scale, rotation, translation, skew, perspective);
 
-			glm::mat4 finaltransform = glm::toMat4(rotation);
-			finaltransform[0] *= scale.x;
-			finaltransform[1] *= scale.y;
-			finaltransform[2] *= scale.z;
+			glm::mat4 finaltransform = glm::scale(scale);
+			
+			glm::mat4 tmp = glm::toMat4(rotation);
+			finaltransform = finaltransform * tmp;
+
 			finaltransform[0][3] = translation.x;
-			finaltransform[2][3] = translation.y;
+			finaltransform[1][3] = translation.y;
 			finaltransform[2][3] = translation.z;
 
 			glm::vec3 off(transform[0][3], transform[1][3], transform[2][3]);
@@ -222,21 +229,23 @@ int main(int argc, const char** argv)
 
 			//Parse the GameEntities
 			DIF::GameEntity ge;
-			ge.position = parseVec(entity->Attribute("origin")) + totaloff;
-			ge.datablock = classname;
-			
-			tinyxml2::XMLElement* properties = entity->FirstChildElement("Properties");
-			const tinyxml2::XMLAttribute* prop = properties->FirstAttribute();
+			if (entity->Attribute("origin") != NULL) {
+				ge.position = parseVec(entity->Attribute("origin")) + totaloff;
+				ge.datablock = classname;
 
-			while (prop != NULL)
-			{
-				ge.properties.push_back(std::pair<std::string, std::string>(std::string(prop->Name()), std::string(prop->Value())));
-				prop = prop->Next();
+				tinyxml2::XMLElement* properties = entity->FirstChildElement("Properties");
+				const tinyxml2::XMLAttribute* prop = properties->FirstAttribute();
+
+				while (prop != NULL)
+				{
+					ge.properties.push_back(std::pair<std::string, std::string>(std::string(prop->Name()), std::string(prop->Value())));
+					prop = prop->Next();
+				}
+
+				ge.gameClass = std::string(properties->Attribute("game_class"));
+
+				builder.addEntity(ge);
 			}
-
-			ge.gameClass = std::string(properties->Attribute("game_class"));
-
-			builder.addEntity(ge);
 
 			entity = entity->NextSiblingElement();
 				
